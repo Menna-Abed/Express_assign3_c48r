@@ -84,31 +84,35 @@ app.post('/user', async (req, res) => {
 app.patch('/user/:id', async (req, res) => {
 
     const id = Number(req.params.id);
-    let data = await fs.readFile("./users.json", {encoding: "utf-8"});
-
+    let data = await fs.readFile("./users.json", { encoding: "utf-8" });
     let users = JSON.parse(data);
     const userExisting = users.find(user => user.id === id);
-
     if (!userExisting) {
-        return res.status(404).json({message: "User ID not found."});
+        return res.status(404).json({
+            message: "User ID not found."
+        });
     }
     const { name, age, email } = req.body;
     if (name !== undefined) {
         userExisting.name = name;
     }
-
     if (age !== undefined) {
         userExisting.age = age;
     }
-
     if (email !== undefined) {
+        const emailExists = users.find(
+            user => user.email === email && user.id !== id
+        );
+        if (emailExists) {
+            return res.status(400).json({ message: "Email already exists." });
+        }
         userExisting.email = email;
     }
-    await fs.writeFile("./users.json", JSON.stringify(users), {encoding: "utf-8"});
-    res.json({message: "User updated successfully."});
-
+    await fs.writeFile(
+        "./users.json",  JSON.stringify(users), { encoding: "utf-8" }
+    );
+    res.json({ message: "User updated successfully." });
 });
-
 //===========================================================================================
 //  Q3
 
