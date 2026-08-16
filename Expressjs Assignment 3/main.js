@@ -88,9 +88,7 @@ app.patch('/user/:id', async (req, res) => {
     let users = JSON.parse(data);
     const userExisting = users.find(user => user.id === id);
     if (!userExisting) {
-        return res.status(404).json({
-            message: "User ID not found."
-        });
+        return res.status(404).json({ message: "User ID not found."});
     }
     const { name, age, email } = req.body;
     if (name !== undefined) {
